@@ -1,5 +1,7 @@
 import { GameObject }       from "../gameobject.js";
+import { Tank } from "../tank.js";
 import { Vector }           from "../vector.js";
+import { MissileWeapon } from "../weapon/missileweapon.js";
 import { Ammunition }       from "./ammunition.js";
 
 export class MissileAmmo extends Ammunition {
@@ -8,6 +10,8 @@ export class MissileAmmo extends Ammunition {
     }
 
     public onCollision(target: GameObject): void {
-        
+        if(target instanceof Tank) {
+            target.changeProjectile(new MissileWeapon)
+        }
     }
 }

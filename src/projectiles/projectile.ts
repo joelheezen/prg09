@@ -1,3 +1,4 @@
+import { Enemy } from "../enemy.js";
 import { GameObject }   from "../gameobject.js";
 import { Tank }         from "../tank.js";
 import { Turret }       from "../turret.js";
@@ -10,6 +11,8 @@ export abstract class Projectile extends GameObject{
     private speed        : number = 10
     private parentTurret : Turret
     private direction    : Vector;
+    protected swerve     : number = 0
+    private boo          : boolean = true
 
     // Properties
     public get Damage()         : number        { return this.damage }
@@ -29,12 +32,15 @@ export abstract class Projectile extends GameObject{
     }
 
     public update() {
-        this.position = this.Position.add(this.direction.scale(this.speed))
+        this.rotation = this.rotation + this.swerve
+        this.position = this.Position.add(Vector.getVectorFromAngle(this.rotation).scale(this.speed))
         super.update();
-
     }
 
     public onCollision(target: GameObject): void {
+        if (target instanceof Enemy){
+            this.div.remove()
+        }
         
     }
 }

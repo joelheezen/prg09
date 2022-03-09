@@ -1,8 +1,8 @@
-import { Bullet }           from "./projectiles/bullet.js";
 import { Game }             from "./game.js";
 import { GameObject }       from "./gameobject.js";
 import { Turret }           from "./turret.js";
 import { Vector }           from "./vector.js";
+import { BulletWeapon }     from "./weapon/bulletweapon.js";
 
 export class Tank extends GameObject{
     private readonly FRICTION       : number    = 0.3  
@@ -19,6 +19,9 @@ export class Tank extends GameObject{
     private game            : Game
     
     protected speed         : Vector    = new Vector(0, 0)
+    private cdFire          : boolean = true
+
+    private weapon          : Weapon
 
     // Properties
     public get Speed()  : Vector { return this.speed }
@@ -35,6 +38,7 @@ export class Tank extends GameObject{
         this.rotation   = 0
         
         this.turret = new Turret(this)
+        this.weapon = new BulletWeapon
 
         window.addEventListener("keydown",  (e : KeyboardEvent) => this.handleKeyDown(e))
         window.addEventListener("keyup",    (e : KeyboardEvent) => this.handleKeyUp(e))
@@ -95,12 +99,23 @@ export class Tank extends GameObject{
     }
 
     private fire() {
-        this.game.gameObjects.push(new Bullet(this))
-        console.log("fire")
+        if(this.cdFire){
+            this.cdFire = false
+            this.game.gameObjects.push(this.weapon.shoot(this))
+            console.log("fire")
+            setTimeout(() => {
+                this.cdFire = true
+            }, this.weapon.getCoolDown());
+        }
+        
     }
 
     onCollision(target: GameObject): void {
         // throw new Error("Method not implemented.");
+    }
+
+    changeProjectile(projectile : Weapon) {
+        this.weapon = projectile
     }
 
     private keepInWindow() {
